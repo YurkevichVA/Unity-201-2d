@@ -11,4 +11,13 @@ public class PipeScript : MonoBehaviour
     {
         transform.Translate(pipeSpeed * Time.deltaTime * Vector3.left);
     }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        //Debug.Log("Collision detected: " + collision.gameObject.name);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log("Trigger detected: " + collision.gameObject.name);
+    }
 }
