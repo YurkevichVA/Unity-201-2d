@@ -17,12 +17,10 @@ public class DisplayScript : MonoBehaviour
     {
         // Знайти компонент TextMeshProUGUI у іншого GameObject "ClockTMP"
         clock = GameObject.Find("ClockTMP").GetComponent<TMPro.TextMeshProUGUI>();
-        vitalityIndicator.fillAmount = 1f;
+        GameState.vitality = 1f; // повне життя на початку гри
         StartCoroutine("vitalityReduce");
         gameTime = 0;
     }
-
-    // Update is called once per frame
     void Update()
     {
         gameTime += Time.deltaTime;
@@ -35,14 +33,14 @@ public class DisplayScript : MonoBehaviour
         int second = time % 60;
         int decisecond = (int)((gameTime - time) * 10);
         clock.text = $"{hour:00}:{minute:00}:{second:00}.{decisecond:0}";
-
         pipesPassedTmp.text = GameState.pipesPassed.ToString();
     }
     IEnumerator vitalityReduce()
     {
-        while (vitalityIndicator.fillAmount > 0) {
-            vitalityIndicator.fillAmount -= 0.02f;
-            if (vitalityIndicator.fillAmount <= 0) break;
+        while (GameState.vitality > 0) {
+            GameState.vitality -= 0.02f;
+            vitalityIndicator.fillAmount = GameState.vitality;
+            if (GameState.vitality <= 0) break;
             yield return new WaitForSeconds(0.5f);
         }
         Debug.Log("Vitality is over!");

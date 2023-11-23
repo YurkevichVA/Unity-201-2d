@@ -8,6 +8,19 @@ public class DestroyPointScript : MonoBehaviour
     {
         // Debug.Log(other.name);
         // У випадку труби колізія відбувається з її складовою частиною, тоді як знищувати треба родительський елемент
-        Destroy(other.gameObject.transform.parent.gameObject);
+        var parent =
+             other           // колайдер (компонент об'єкту)
+            .gameObject     // об'єкт цього колайдеру
+            .transform      // його компонент transform
+            .parent;        // батьківський transform
+                            //.gameObject;   // об'єкт цього transform - батьківський об'єкт
+        if (parent != null && parent.CompareTag("Pipe"))
+        {
+            GameObject.Destroy(parent.gameObject);
+        }
+        else
+        {
+            GameObject.Destroy(other.gameObject);
+        }
     }
 }
