@@ -1,3 +1,4 @@
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,14 +16,26 @@ public class MenuScript : MonoBehaviour
     private Slider vitalitySlider;
 
     private bool isShow;
+    private const string configFilename = "Assets/Files/config.json";
 
     void Start()
     {
         isShow = content.activeInHierarchy;
         ToggleMenu(!isShow);
-        GameState.isWKeyEnabled = controlWToggle.isOn;
-        SetPipePeriod(pipePeriodSlider.value);
-        SetVitality(vitalitySlider.value);
+
+        if (LoadSettings())
+        {
+            controlWToggle.isOn = GameState.isWKeyEnabled;
+            pipePeriodSlider.value = (6f - GameState.pipesPeriod) / (6f - 2f);
+            vitalitySlider.value = (0.8f - GameState.vitality) / (0.8f - 0.3f);
+        }
+        else
+        {
+            GameState.isWKeyEnabled = controlWToggle.isOn;
+            SetPipePeriod(pipePeriodSlider.value);
+            SetVitality(vitalitySlider.value);
+            SaveSettings();
+        }
     }
 
     void Update()
@@ -55,6 +68,7 @@ public class MenuScript : MonoBehaviour
     public void ControlWKeyToggleChanged(bool value)
     {
         GameState.isWKeyEnabled = value;
+        SaveSettings();
     }
     public void PipePeriodSliderChanged(float value)
     {
@@ -64,6 +78,7 @@ public class MenuScript : MonoBehaviour
     private void SetPipePeriod(float sliderValue)
     {
         GameState.pipesPeriod = 6f - (6f - 2f) * sliderValue;
+        SaveSettings();
     }
     public void VitalitySliderChanged(float value)
     {
@@ -72,5 +87,19 @@ public class MenuScript : MonoBehaviour
     private void SetVitality(float value)
     {
         GameState.vitalityDifficulty = 0.8f - (0.8f - 0.3f) * value;
+        SaveSettings();
+    }
+    private void SaveSettings()
+    {
+        File.WriteAllText(configFilename, GameState.ToJson());
+    }
+    private bool LoadSettings()
+    {
+        if (File.Exists(configFilename))
+        {
+            GameState.FromJson(File.ReadAllText(configFilename));
+            return true;
+        }
+        return false;
     }
 }
