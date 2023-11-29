@@ -9,8 +9,6 @@ public class MenuScript : MonoBehaviour
     [SerializeField]
     private GameObject content;
     [SerializeField]
-    private Toggle controlWToggle;
-    [SerializeField]
     private Slider pipePeriodSlider;
     [SerializeField]
     private Slider vitalitySlider;
@@ -25,19 +23,16 @@ public class MenuScript : MonoBehaviour
 
         if (LoadSettings())
         {
-            controlWToggle.isOn = GameState.isWKeyEnabled;
             pipePeriodSlider.value = (6f - GameState.pipesPeriod) / (6f - 2f);
             vitalitySlider.value = (0.8f - GameState.vitality) / (0.8f - 0.3f);
         }
         else
         {
-            GameState.isWKeyEnabled = controlWToggle.isOn;
             SetPipePeriod(pipePeriodSlider.value);
             SetVitality(vitalitySlider.value);
             SaveSettings();
         }
     }
-
     void Update()
     {
         if (Input.GetKeyUp(KeyCode.Escape))
@@ -65,19 +60,13 @@ public class MenuScript : MonoBehaviour
     {
         ToggleMenu(true);
     }
-    public void ControlWKeyToggleChanged(bool value)
-    {
-        GameState.isWKeyEnabled = value;
-        SaveSettings();
-    }
     public void PipePeriodSliderChanged(float value)
     {
-        //Debug.Log(value);
         SetPipePeriod(value);
     }
     private void SetPipePeriod(float sliderValue)
     {
-        GameState.pipesPeriod = 6f - (6f - 2f) * sliderValue;
+        GameState.pipesPeriod = sliderValue;
         SaveSettings();
     }
     public void VitalitySliderChanged(float value)
@@ -86,7 +75,7 @@ public class MenuScript : MonoBehaviour
     }
     private void SetVitality(float value)
     {
-        GameState.vitalityDifficulty = 0.8f - (0.8f - 0.3f) * value;
+        GameState.vitalityDifficulty = value;
         SaveSettings();
     }
     private void SaveSettings()

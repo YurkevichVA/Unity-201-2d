@@ -24,15 +24,6 @@ public class BirdScript : MonoBehaviour
         {
             body.AddForce(Vector2.up * Time.timeScale * forceFactor);
         }
-        if (Input.GetKey(KeyCode.W) && GameState.isWKeyEnabled) // "неперервний" - з кожен Update 
-        {
-            body.AddForce(continualForceFactor * Time.deltaTime * Vector2.up);
-        }
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        //Debug.Log("Collision detected" + collision.gameObject.name);
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
