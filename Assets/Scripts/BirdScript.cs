@@ -5,18 +5,16 @@ using UnityEngine;
 public class BirdScript : MonoBehaviour
 {
     private Rigidbody2D body;
-    private float forceFactor = 250f;
+    private float forceFactor = 350f;
 
-    private float continualForceFactor = 1000f;
-
-    // Start is called before the first frame update
+    private Vector3 startPosition;
     void Start()
     {
         body = this.GetComponent<Rigidbody2D>();
+        startPosition = transform.position;
+        GameState.restartEvent += OnRestart;
         GameState.pipesPassed = 0;
     }
-
-    // Update is called once per frame
     void Update()
     {
         //body.AddForce(Vector2.right);
@@ -27,10 +25,9 @@ public class BirdScript : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Transform parent = other.gameObject.transform.parent;
-        if (parent != null && parent.gameObject.CompareTag("Pipe"))
+        if (other.gameObject.CompareTag("Pipe") || other.gameObject.CompareTag("Edge"))
         {
-            //todo lose
+            GameState.OnGameOver();
         }
         else
         {
@@ -43,18 +40,13 @@ public class BirdScript : MonoBehaviour
     }
     private void OnTriggerExit2D(Collider2D other)
     {
-        // Debug.Log(other.gameObject.tag);
-        if(other.gameObject.CompareTag("Pipe"))
+        if(other.gameObject.CompareTag("PipePassed"))
         {
             GameState.pipesPassed += 1;
         }
     }
+    private void OnRestart()
+    {
+        transform.position = startPosition;
+    }
 }
-/* З точки зору взаємодії між собою колайдери поділяються на фізичні та тригери
- * 
- * Фізичні колайдери "відпрацьовують" зіткнення засобами двигуна Юніті та передають у скріпт подію
- * 
- * Тригер-колайдери не беруть участь у двигуні, лише передають подію OnTriggerEnter2d
- * 
- * Події
- */

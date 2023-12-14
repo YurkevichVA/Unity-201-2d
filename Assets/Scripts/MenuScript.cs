@@ -14,24 +14,18 @@ public class MenuScript : MonoBehaviour
     private Slider vitalitySlider;
 
     private bool isShow;
-    private const string configFilename = "Assets/Files/config.json";
+    //private const string configFilename = "Assets/Files/config.json";
 
     void Start()
     {
         isShow = content.activeInHierarchy;
         ToggleMenu(!isShow);
 
-        if (LoadSettings())
-        {
-            pipePeriodSlider.value = (6f - GameState.pipesPeriod) / (6f - 2f);
-            vitalitySlider.value = (0.8f - GameState.vitality) / (0.8f - 0.3f);
-        }
-        else
-        {
-            SetPipePeriod(pipePeriodSlider.value);
-            SetVitality(vitalitySlider.value);
-            SaveSettings();
-        }
+        pipePeriodSlider.value = PlayerPrefs.GetFloat("PipePeriod", 4f);
+        vitalitySlider.value = PlayerPrefs.GetFloat("VitalityDiff", 0.6f);
+
+        SetPipePeriod(pipePeriodSlider.value);
+        SetVitality(vitalitySlider.value);
     }
     void Update()
     {
@@ -39,7 +33,6 @@ public class MenuScript : MonoBehaviour
         {
             ToggleMenu(isShow);
         }
-
     }
     private void ToggleMenu(bool isDisplay)
     {
@@ -56,7 +49,7 @@ public class MenuScript : MonoBehaviour
             Time.timeScale = 0f;
         }
     }
-    public void CloseButtonClick()
+    public void StartButtonClick()
     {
         ToggleMenu(true);
     }
@@ -64,10 +57,10 @@ public class MenuScript : MonoBehaviour
     {
         SetPipePeriod(value);
     }
-    private void SetPipePeriod(float sliderValue)
+    private void SetPipePeriod(float value)
     {
-        GameState.pipesPeriod = sliderValue;
-        SaveSettings();
+        GameState.pipesPeriod = value;
+        PlayerPrefs.SetFloat("PipePeriod", value);
     }
     public void VitalitySliderChanged(float value)
     {
@@ -76,19 +69,6 @@ public class MenuScript : MonoBehaviour
     private void SetVitality(float value)
     {
         GameState.vitalityDifficulty = value;
-        SaveSettings();
-    }
-    private void SaveSettings()
-    {
-        File.WriteAllText(configFilename, GameState.ToJson());
-    }
-    private bool LoadSettings()
-    {
-        if (File.Exists(configFilename))
-        {
-            GameState.FromJson(File.ReadAllText(configFilename));
-            return true;
-        }
-        return false;
+        PlayerPrefs.SetFloat("VitalityDiff", value);
     }
 }

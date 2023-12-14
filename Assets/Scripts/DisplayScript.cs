@@ -9,17 +9,17 @@ public class DisplayScript : MonoBehaviour
     private TMPro.TextMeshProUGUI pipesPassedTmp;
     [SerializeField]
     private Image vitalityIndicator;
-
+    [SerializeField]
     private TMPro.TextMeshProUGUI clock;
     private float gameTime;
 
     void Start()
     {
-        // Знайти компонент TextMeshProUGUI у іншого GameObject "ClockTMP"
-        clock = GameObject.Find("ClockTMP").GetComponent<TMPro.TextMeshProUGUI>();
-        GameState.vitality = 1f; // повне життя на початку гри
+        GameState.vitality = 1f;
+        GameState.gameOverEvent += OnGameOver;
+        GameState.restartEvent += OnRestart;
         StartCoroutine("vitalityReduce");
-        gameTime = 0;
+        gameTime = 0f;
     }
     void Update()
     {
@@ -44,5 +44,17 @@ public class DisplayScript : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
         }
         Debug.Log("Vitality is over!");
+    }
+    private void OnGameOver()
+    {
+        StopAllCoroutines();
+        vitalityIndicator.fillAmount = 1;
+        gameTime = 0f;
+    }
+    private void OnRestart()
+    {
+        GameState.pipesPassed = 0;
+        pipesPassedTmp.text = "0";
+        StartCoroutine("vitalityReduce");
     }
 }
